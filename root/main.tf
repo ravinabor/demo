@@ -31,12 +31,12 @@ module "security-group" {
   my_ip  = var.my_ip
 }
 
- creating Key for instances
+# creating Key for instances
 module "key" {
   source = "../modules/key"
 }
 
- Creating Application Load balancer
+ # Creating Application Load balancer
 module "alb" {
   source        = "../modules/alb"
   project_name  = module.vpc.project_name
