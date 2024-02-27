@@ -36,11 +36,13 @@ cd apache-tomcat-9.0.86/
 cd bin/
 ./startup.sh
 cd /mnt/
-sudo git clone https://github.com/Shantanumajan6/project.git
-sudo chmod -R 777 project/
-cd project
+sudo git https://github.com/ravinabor/app.git
+sudo chmod -R 777 app/
+cd app
 mvn clean install
 cd target/
 sudo cp LoginWebApp.war /mnt/apache-tomcat-9.0.86/webapps/
 cd /mnt/apache-tomcat-9.0.86/
+cd bin/
+./startup.sh
     
