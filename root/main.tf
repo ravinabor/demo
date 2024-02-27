@@ -5,25 +5,25 @@ module "vpc" {
   vpc_cidr        = var.vpc_cidr
   pub_sub_1a_cidr = var.pub_sub_1a_cidr
   pub_sub_2b_cidr = var.pub_sub_2b_cidr
-#   pri_sub_3a_cidr = var.pri_sub_3a_cidr
-#   pri_sub_4b_cidr = var.pri_sub_4b_cidr
-#   pri_sub_5a_cidr = var.pri_sub_5a_cidr
-#   pri_sub_6b_cidr = var.pri_sub_6b_cidr
+  pri_sub_3a_cidr = var.pri_sub_3a_cidr
+   pri_sub_4b_cidr = var.pri_sub_4b_cidr
+   pri_sub_5a_cidr = var.pri_sub_5a_cidr
+   pri_sub_6b_cidr = var.pri_sub_6b_cidr
  }
 
-# module "nat" {
-#   source = "../modules/nat"
+ module "nat" {
+   source = "../modules/nat"
 
-#   pub_sub_1a_id = module.vpc.pub_sub_1a_id
-#   igw_id        = module.vpc.igw_id
-#   pub_sub_2b_id = module.vpc.pub_sub_2b_id
-#   vpc_id        = module.vpc.vpc_id
-#   pri_sub_3a_id = module.vpc.pri_sub_3a_id
-#   pri_sub_4b_id = module.vpc.pri_sub_4b_id
-#   pri_sub_5a_id = module.vpc.pri_sub_5a_id
-#   pri_sub_6b_id = module.vpc.pri_sub_6b_id
-#   group_names =  module.asg.asg_name 
-# }
+   pub_sub_1a_id = module.vpc.pub_sub_1a_id
+   igw_id        = module.vpc.igw_id
+   pub_sub_2b_id = module.vpc.pub_sub_2b_id
+   vpc_id        = module.vpc.vpc_id
+   pri_sub_3a_id = module.vpc.pri_sub_3a_id
+   pri_sub_4b_id = module.vpc.pri_sub_4b_id
+   pri_sub_5a_id = module.vpc.pri_sub_5a_id
+   pri_sub_6b_id = module.vpc.pri_sub_6b_id
+   group_names =  module.asg.asg_name 
+ }
 
 module "security-group" {
   source = "../modules/security-group"
@@ -31,12 +31,12 @@ module "security-group" {
   my_ip  = var.my_ip
 }
 
-# creating Key for instances
+ creating Key for instances
 module "key" {
   source = "../modules/key"
 }
 
-# Creating Application Load balancer
+ Creating Application Load balancer
 module "alb" {
   source        = "../modules/alb"
   project_name  = module.vpc.project_name
@@ -46,48 +46,47 @@ module "alb" {
   vpc_id        = module.vpc.vpc_id
 }
 
+ data "aws_ami" "ubuntu" {
+   most_recent = true
+   owners      = ["099720109477"]
+   filter {
+     name   = "name"
+     values = ["${var.aws_ami}"]
+   }
+   filter {
+     name   = "root-device-type"
+     values = ["ebs"]
+   }
+   filter {
+     name   = "virtualization-type"
+     values = ["hvm"]
+   }
+ }
 
-# data "aws_ami" "ubuntu" {
-#   most_recent = true
-#   owners      = ["099720109477"]
-#   filter {
-#     name   = "name"
-#     values = ["${var.aws_ami}"]
-#   }
-#   filter {
-#     name   = "root-device-type"
-#     values = ["ebs"]
-#   }
-#   filter {
-#     name   = "virtualization-type"
-#     values = ["hvm"]
-#   }
-# }
+ module "asg" {
+   source        = "../modules/asg"
+   project_name  = module.vpc.project_name
+   key_name      = module.key.key_name
+   client_sg_id  = module.security-group.client_sg_id
+   pri_sub_3a_id = module.vpc.pri_sub_3a_id
+   pri_sub_4b_id = module.vpc.pri_sub_4b_id
+   tg_arn        = module.alb.tg_arn
+   endpoint =  var.endpoint
+   //ami = var.ami
+   ami = data.aws_ami.ubuntu.id
 
-# module "asg" {
-#   source        = "../modules/asg"
-#   project_name  = module.vpc.project_name
-#   key_name      = module.key.key_name
-#   client_sg_id  = module.security-group.client_sg_id
-#   pri_sub_3a_id = module.vpc.pri_sub_3a_id
-#   pri_sub_4b_id = module.vpc.pri_sub_4b_id
-#   tg_arn        = module.alb.tg_arn
-#   endpoint =  var.endpoint
-#   //ami = var.ami
-#   ami = data.aws_ami.ubuntu.id
-
-# }
+ }
 
 # # creating RDS instance
 
-# module "rds" {
-#   source        = "../modules/rds"
-#   db_sg_id      = module.security-group.db_sg_id
-#   pri_sub_5a_id = module.vpc.pri_sub_5a_id
-#   pri_sub_6b_id = module.vpc.pri_sub_6b_id
-#   db_username   = var.db_username
-#   db_password   = var.db_password
-# }
+ module "rds" {
+   source        = "../modules/rds"
+   db_sg_id      = module.security-group.db_sg_id
+   pri_sub_5a_id = module.vpc.pri_sub_5a_id
+   pri_sub_6b_id = module.vpc.pri_sub_6b_id
+   db_username   = var.db_username
+   db_password   = var.db_password
+ }
 
 
  
