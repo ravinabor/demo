@@ -19,7 +19,7 @@
 
 
  ## Please find the github repository link and clone the repo : 
-[![ (https://github.com/ravinabor/hello-world.git)]
+[![ (https://github.com/ravinabor/demo.git)]
 
 
 
@@ -41,10 +41,10 @@ add below code in book_shop_app/backend.tf
 ```sh
 terraform {
   backend "s3" {
-    bucket = "BUCKET_NAME"
-    key    = "backend/FILE_NAME_TO_STORE_STATE.tfstate"
-    region = "us-east-1"
-    dynamodb_table = "dynamoDB_TABLE_NAME"
+    bucket         = "ravinaborkar09876"
+    key            = "backend/demo.tfstate"
+    region         = "ap-south-1"
+    dynamodb_table = "remote-backend"
   }
 }
 ```
